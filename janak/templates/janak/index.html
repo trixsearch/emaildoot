@@ -1,0 +1,98 @@
+{% extends "janak/base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 class="card-title">What email do you want to write?</h2>
+    <form id="email-form">
+        {% csrf_token %}
+        <textarea 
+            id="prompt-input" 
+            name="prompt" 
+            placeholder="e.g., 'Write a follow-up email after a job interview', 'Compose a meeting request to a client', 'Draft a professional resignation letter'"
+        ></textarea>
+        
+        <div class="examples">
+            <div class="example-card" onclick="document.getElementById('prompt-input').value = 'Write a professional email to a client explaining a 2-week delay in project delivery and reassuring them about the quality of the final product.'">
+                <div class="example-title">Project Delay Notification</div>
+                <div class="example-text">Inform client about delay while maintaining trust</div>
+            </div>
+            <div class="example-card" onclick="document.getElementById('prompt-input').value = 'Compose a follow-up email after a job interview, expressing continued interest in the position and thanking the interviewer for their time.'">
+                <div class="example-title">Interview Follow-up</div>
+                <div class="example-text">Professional follow-up after job interview</div>
+            </div>
+            <div class="example-card" onclick="document.getElementById('prompt-input').value = 'Draft a resignation email to my manager, expressing gratitude for the opportunities and offering to assist with the transition.'">
+                <div class="example-title">Resignation Letter</div>
+                <div class="example-text">Professional resignation with transition offer</div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn" style="margin-top: 15px;" id="generate-btn">Generate Email</button>
+    </form>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Generating your email with AI...</p>
+    </div>
+</div>
+
+<div class="card result-container" id="result-container">
+    <h2 class="card-title">Your Generated Email</h2>
+    <div class="email-output" id="email-output"></div>
+    
+    <div class="actions">
+        <button class="btn" onclick="copyToClipboard(document.getElementById('email-output').innerText)">Copy Email</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('result-container').style.display = 'none'; document.getElementById('prompt-input').value = ''; document.getElementById('prompt-input').focus()">Create Another</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('email-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const prompt = document.getElementById('prompt-input').value.trim();
+        if (!prompt) {
+            alert('Please describe the email you want to generate');
+            return;
+        }
+        
+        // Show loading state
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('generate-btn').disabled = true;
+        
+        // Hide previous result
+        document.getElementById('result-container').style.display = 'none';
+        
+        // Prepare form data
+        const formData = new FormData(this);
+        
+        // Send request to server
+        fetch('/generate/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Display result
+            document.getElementById('email-output').textContent = data.email;
+            document.getElementById('result-container').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error generating email: ' + error.message);
+        })
+        .finally(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('generate-btn').disabled = false;
+        });
+    });
+</script>
+{% endblock %}
