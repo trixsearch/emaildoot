@@ -127,7 +127,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SECRET_KEY = 'django-insecure-+7!@kf%4$6jz@d*e5&0!xr$%9!8f5#j@4!b@k$*!f#g@h3%4v'
 
 # Grok API configuration
-# GROK_API_KEY = 'xai-faKPIzVn1X3AxjgEVJaHCk7dUG3Iavvu7agLXJVqRxMgB9BOwb5YFSWMPieHR1bmnFv2hMBP7UTnqHUa'
-# GROK_API_KEY = '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'
-GROK_API_KEY = 'gsk_KEY'
+GROK_API_KEY = ''
 GROK_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
