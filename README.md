@@ -94,4 +94,4 @@ If you have any questions, suggestions, or feedback, feel free to reach out:
 
 *Made with ❤️ by Trixsearch*
 
-```
+
